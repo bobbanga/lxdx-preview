@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>我只给 AI 三样东西，做出了一个货代知识库</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #20242a;
+      --muted: #7a8490;
+      --line: #d9ded8;
+      --paper: #f7f8f5;
+      --green: #147c63;
+      --green-strong: #0f8f6a;
+      --gold: #d8b84e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 248, 245, .96);
+      backdrop-filter: blur(8px);
+    }
+    .toolbar-inner {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .toolbar-title {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    button {
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: white;
+      color: var(--green);
+    }
+    .copy-state {
+      min-height: 20px;
+      color: var(--green);
+      font-size: 13px;
+      text-align: right;
+    }
+    .page {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+    .note {
+      margin: 18px auto 0;
+      max-width: 677px;
+      padding: 12px 14px;
+      border-left: 4px solid var(--gold);
+      background: #faf7e9;
+      color: #5c4327;
+      font-size: 14px;
+    }
+    @media (max-width: 680px) {
+      .toolbar-inner { width: calc(100% - 24px); display: block; }
+      .toolbar-actions { justify-content: flex-start; margin-top: 8px; }
+      .copy-state { text-align: left; }
+      .page { width: 100%; padding: 0 0 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar" aria-label="copy toolbar">
+    <div class="toolbar-inner">
+      <div>
+        <div class="toolbar-title">公众号复制版｜模板 V1.2｜第 5 篇｜正文区复制</div>
+        <div id="copy-state" class="copy-state" aria-live="polite"></div>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" id="copy-rich">复制公众号正文</button>
+        <button type="button" id="select-rich" class="secondary">选中正文</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="page">
+    <section
+      style="max-width: 677px; margin: 0 auto 18px; padding: 12px 14px; border: 1px dashed #d9ded8; background: #fbfcfa; color: #7a8490; font-size: 13px; line-height: 1.7;"
+    >
+      <p style="margin: 0; color: #147c63; font-weight: 700;">Git 审稿辅助，不会复制到公众号后台</p>
+      <p style="margin: 4px 0 0;">article_id: wechat-005-freight-knowledge-base / status: draft_v1 / 结构：现场误区、业务地图、字段标准、场景问答、能力边界</p>
+    </section>
+
+    <section
+      id="wechat-copy-content"
+      style="max-width: 677px; margin: 0 auto; padding: 0; color: #20242a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.78; background: #ffffff;"
+    >
+      <section style="padding: 0 2px;">
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">我以前也以为，做知识库就是把资料整理好，丢给 AI。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">报价表、渠道说明、常见问题、操作注意事项、历史聊天记录，只要都放进去，AI 就应该能回答问题。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">后来做货代场景才发现，不是这么回事。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">很多公司不是没有资料，而是资料没有业务顺序。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">新人进来以后，还是要一遍遍问老员工：</p>
+        <ul style="margin: 0 0 20px; padding-left: 1.4em; color: #20242a; font-size: 17px; line-height: 1.85;">
+          <li style="margin: 6px 0;">这个费用为什么要这样算？</li>
+          <li style="margin: 6px 0;">客户只给了目的港，为什么还不能报价？</li>
+          <li style="margin: 6px 0;">截单、截关、补料、提单确认到底先看哪个？</li>
+          <li style="margin: 6px 0;">这个问题能不能直接回复客户？</li>
+        </ul>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">老员工不是不想教，新人也不是不努力。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">真正的问题是：经验散在每个人脑子里，资料散在表格、聊天记录、邮件和文件夹里。看起来很多，真正到业务现场，还是靠人临时翻、临时问、临时判断。</p>
+
+        <section style="margin: 22px 0; padding: 14px 16px; border-left: 4px solid #147c63; background: #f7fbf8;">
+          <p style="margin: 0; color: #147c63; font-size: 17px; font-weight: 800; line-height: 1.7;">知识库不是资料仓库，而是能被新人和 AI 一起使用的业务秩序。</p>
+        </section>
+
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这时你把一堆资料丢给 AI，它也不会自然变成“懂业务的人”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可能能解释名词，能总结文档，能写一段看起来不错的话。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">但它不知道这句话能不能对客户说，不知道哪个字段缺了就不能报价，也不知道哪些动作一旦确认，就变成了公司的承诺。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">所以我后来换了一个思路。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">我没有先给 AI 一堆文档。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">我先给它三样东西：</p>
+        <ol style="margin: 0 0 20px; padding-left: 1.4em; color: #20242a; font-size: 17px; line-height: 1.85;">
+          <li style="margin: 6px 0;">业务地图</li>
+          <li style="margin: 6px 0;">字段标准</li>
+          <li style="margin: 6px 0;">场景问答 / 案例样本</li>
+        </ol>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这三样东西听起来不复杂，但它们决定了一个货代知识库到底是“资料仓库”，还是能被新人和 AI 一起使用的业务秩序。</p>
+
+        <section style="margin: 34px 0 16px; padding: 9px 0; border-top: 1px solid #d9ded8; border-bottom: 1px solid #edf0ed;">
+          <p style="margin: 0; color: #20242a; font-size: 20px; font-weight: 800; line-height: 1.45;">
+            <span style="display: inline-block; margin-right: 8px; color: #0f8f6a; font-size: 16px; font-weight: 800; line-height: 1.4;">01</span>第一样：业务地图
+          </p>
+        </section>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">货代业务不是一个个孤立问题。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">客户问快递费，不只是“多少钱”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">背后可能有品名、重量、尺寸、目的地、渠道、时效、附加费、是否带电、是否敏感货、有没有报关资料。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">客户问提单，也不只是“这几个字对不对”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">背后有收货人、通知人、品名、件毛体、放货方式、费用条款、客户授权和责任边界。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">如果 AI 不知道业务怎么流转，它就只能按字面回答。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">所以第一步，我给它的不是文档，而是一张业务地图。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这张地图不需要一开始很复杂，但至少要说明：</p>
+        <ul style="margin: 0 0 20px; padding-left: 1.4em; color: #20242a; font-size: 17px; line-height: 1.85;">
+          <li style="margin: 6px 0;">一票货从询盘到报价，大概经过哪些节点；</li>
+          <li style="margin: 6px 0;">从报价到订舱，需要哪些资料；</li>
+          <li style="margin: 6px 0;">从订舱到提单确认，哪些字段会影响客户承诺；</li>
+          <li style="margin: 6px 0;">业务、操作、单证、客服分别在什么时候介入；</li>
+          <li style="margin: 6px 0;">哪些动作只是内部整理，哪些动作一旦发出去就是对外承诺。</li>
+        </ul>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">有了这张地图，AI 才知道客户问的不是一个孤立问题，而是处在某个业务节点里。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">比如客户只发来一句：“这个到洛杉矶多少钱？”</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">没有业务地图时，AI 容易急着组织回复。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">有业务地图以后，它应该先提醒：目的地不够，至少还要确认品名、重量、尺寸、件数、服务类型、是否带电、是否有时效要求。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这不是为了把问题变复杂。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这是为了让报价前的资料先完整起来。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">知识库的第一层，不是答案，而是业务怎么走。</p>
+
+        <section style="margin: 34px 0 16px; padding: 9px 0; border-top: 1px solid #d9ded8; border-bottom: 1px solid #edf0ed;">
+          <p style="margin: 0; color: #20242a; font-size: 20px; font-weight: 800; line-height: 1.45;">
+            <span style="display: inline-block; margin-right: 8px; color: #0f8f6a; font-size: 16px; font-weight: 800; line-height: 1.4;">02</span>第二样：字段标准
+          </p>
+        </section>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">光有业务地图还不够。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">地图告诉 AI 现在走到哪一步，字段标准告诉 AI 哪些信息不能猜。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">货代业务里，很多风险不是因为没人努力，而是因为“差不多”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">客户说重量大概 100 公斤。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">业务说先估一下。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">操作说按之前类似的走。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">单证说提单草稿看起来没什么问题。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这些话在日常沟通里很常见，但一旦进入报价、订舱、提单、费用确认，就不能只靠“差不多”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">字段标准要回答几个问题：</p>
+        <ul style="margin: 0 0 20px; padding-left: 1.4em; color: #20242a; font-size: 17px; line-height: 1.85;">
+          <li style="margin: 6px 0;">什么字段必须有；</li>
+          <li style="margin: 6px 0;">什么字段可以后补；</li>
+          <li style="margin: 6px 0;">什么字段一缺就不能继续；</li>
+          <li style="margin: 6px 0;">什么字段会影响费用、时效、责任和客户承诺；</li>
+          <li style="margin: 6px 0;">哪些字段只能提醒，不能由 AI 自动确认。</li>
+        </ul>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">比如报价场景，起运地、目的地、品名、件数、重量、体积、渠道、时效要求，这些不是表格好不好看的问题。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它们决定这票货能不能报价，报价是不是靠谱，后面会不会出现附加费、延误或客户争议。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">再比如提单场景，收货人、通知人、品名、件毛体、放货方式，不是普通文字。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它们背后是货权、清关、费用和放货责任。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">AI 可以提醒字段缺失，可以发现前后不一致，可以把差异列出来。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">但它不能因为“看起来没问题”，就替人确认报价或确认提单。</p>
+
+        <section style="margin: 22px 0; padding: 14px 16px; border-left: 4px solid #147c63; background: #f7fbf8;">
+          <p style="margin: 0; color: #147c63; font-size: 17px; font-weight: 800; line-height: 1.7;">字段标准不是为了让 AI 更会回答，而是为了让 AI 知道什么时候必须停下来。</p>
+        </section>
+
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">没有字段标准，AI 只能更快地输出一段话。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">有了字段标准，它才可能变成一个懂边界的助手。</p>
+
+        <section style="margin: 34px 0 16px; padding: 9px 0; border-top: 1px solid #d9ded8; border-bottom: 1px solid #edf0ed;">
+          <p style="margin: 0; color: #20242a; font-size: 20px; font-weight: 800; line-height: 1.45;">
+            <span style="display: inline-block; margin-right: 8px; color: #0f8f6a; font-size: 16px; font-weight: 800; line-height: 1.4;">03</span>第三样：场景问答和案例样本
+          </p>
+        </section>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">业务地图解决“流程怎么走”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">字段标准解决“哪些信息不能猜”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">场景问答和案例样本，解决“遇到问题怎么判断”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">很多公司都有 FAQ。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">但我说的场景问答，不是把常见问题整理成一堆标准答案。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">那样做出来的东西，往往只能回答名词解释。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">真正有用的场景问答，应该把老员工脑子里的判断拆出来。</p>
+        <ul style="margin: 0 0 20px; padding-left: 1.4em; color: #20242a; font-size: 17px; line-height: 1.85;">
+          <li style="margin: 6px 0;">新人问：什么是截单？</li>
+          <li style="margin: 6px 0;">客户问：报个价为什么要这么多资料？</li>
+          <li style="margin: 6px 0;">业务问：客户只给目的港和品名，可以先报吗？</li>
+          <li style="margin: 6px 0;">操作问：提单上这个收货人和客户补料不一样，能不能过？</li>
+          <li style="margin: 6px 0;">客服问：客户催得很急，哪些话可以先说，哪些必须等业务确认？</li>
+        </ul>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这些问题的重点，不只是答案本身。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">重点是让新人知道：这个问题属于哪类场景，缺什么信息，下一步该问谁，哪些地方不能自己拍板。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">AI 在这里可以做得很好。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以陪新人练习。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以把客户问题转成内部待确认清单。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以提醒“这句话不要直接承诺客户”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以把历史案例中的判断路径提炼出来，让新人知道老员工为什么这么处理。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">但它仍然不能替公司做最终决定。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">我希望它像一个被训练过的新员工，而不是一个可以直接代表公司拍板的人。</p>
+
+        <section style="margin: 34px 0 16px; padding: 9px 0; border-top: 1px solid #d9ded8; border-bottom: 1px solid #edf0ed;">
+          <p style="margin: 0; color: #20242a; font-size: 20px; font-weight: 800; line-height: 1.45;">
+            <span style="display: inline-block; margin-right: 8px; color: #0f8f6a; font-size: 16px; font-weight: 800; line-height: 1.4;">04</span>这个知识库能做什么，不能做什么
+          </p>
+        </section>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">当业务地图、字段标准、场景问答这三样东西立起来以后，知识库才开始有用。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以帮新人理解业务名词，而不是只背解释。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以提醒业务员：客户资料缺哪些字段，哪些字段影响费用和时效。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以把客户一句模糊的问题，拆成内部要确认的几个点。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它可以在报价、订舱、提单、费用这些环节前，提醒哪些地方属于高风险边界。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它也可以帮老板看清楚：哪些经验已经变成团队能复用的东西，哪些经验还只在某个老员工脑子里。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这才是知识库真正有价值的地方。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">不是资料放得多，而是能不能在业务现场被用起来。</p>
+        <section style="margin: 22px 0; padding: 14px 16px; border-left: 4px solid #147c63; background: #f7fbf8;">
+          <p style="margin: 0 0 8px; color: #20242a; font-size: 17px; font-weight: 800; line-height: 1.7;">必须停下来的地方</p>
+          <p style="margin: 0; color: #20242a; font-size: 16px; line-height: 1.8;">正式报价、提单确认、费用承担、客户承诺这些动作，AI 只能辅助整理、提醒和检查，不能自己闭环。</p>
+        </section>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">我也必须把边界说清楚。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">货代知识库不是自动报价系统。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它不能替人承诺价格。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它不能替人确认提单。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它不能替人判断货权、费用、改单和放货责任。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">它不能绕过业务、操作、单证和负责人之间的人工确认。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">很多人做 AI 容易急着追求“自动化”。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">但在货代这种责任链条很长的业务里，第一步不是无人化。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">第一步是把原来靠经验、记忆和临时沟通撑起来的东西，拆成能被团队理解、能被系统记录、能被 AI 辅助的秩序。</p>
+
+        <section style="margin: 34px 0 16px; padding: 9px 0; border-top: 1px solid #d9ded8; border-bottom: 1px solid #edf0ed;">
+          <p style="margin: 0; color: #20242a; font-size: 20px; font-weight: 800; line-height: 1.45;">
+            <span style="display: inline-block; margin-right: 8px; color: #0f8f6a; font-size: 16px; font-weight: 800; line-height: 1.4;">LAST</span>写在最后
+          </p>
+        </section>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">我只给 AI 三样东西。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">业务地图，字段标准，场景问答 / 案例样本。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">看起来不多，但它们其实都是过去业务里最难沉淀的部分。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">业务怎么走，字段怎么看，遇到问题怎么判断。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这些东西不立住，AI 再强，也只是一个会说话的资料搜索框。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">这些东西立住以后，AI 才可能帮新人理解业务，帮业务员少漏字段，帮团队把经验变成可复用的能力。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">知识库的本质，不是保存资料。</p>
+        <p style="margin: 0 0 18px; color: #20242a; font-size: 17px; line-height: 1.85;">而是把个人经验变成团队能力。</p>
+        <section style="margin: 22px 0; padding: 14px 16px; border-left: 4px solid #147c63; background: #f7fbf8;">
+          <p style="margin: 0; color: #147c63; font-size: 18px; font-weight: 800; line-height: 1.7;">先立序，再代行。</p>
+        </section>
+
+        <section style="margin: 30px 0 0; padding: 14px 16px; border-top: 1px solid #d9ded8; border-bottom: 1px solid #d9ded8; background: #fbfcfa; text-align: center;">
+          <p style="margin: 0; color: #20242a; font-size: 15px; font-weight: 700; line-height: 1.7;">如果这篇对你有启发，可以点赞、在看，或转给身边也在研究 AI 落地的朋友。</p>
+          <p style="margin: 8px 0 0; color: #147c63; font-size: 13px; font-weight: 700; line-height: 1.6;">点赞 · 在看 · 转发</p>
+        </section>
+      </section>
+    </section>
+
+    <div class="note">使用方式：点击“复制公众号正文”，再粘贴到公众号后台正文区。复制内容从正文第一段开始，不包含 Git 审稿状态、标题、作者或目录导航；实际公众号后台仍可能按平台规则轻微清洗样式。</div>
+  </main>
+
+  <script>
+    const copyRoot = document.getElementById('wechat-copy-content');
+    const copyState = document.getElementById('copy-state');
+
+    function plainTextFrom(root) {
+      return root.innerText.replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function selectCopyRoot() {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(copyRoot);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      copyState.textContent = '已选中正文，可按 Ctrl+C 复制';
+    }
+
+    async function copyRichHtml() {
+      const html = `<!doctype html><html><body>${copyRoot.outerHTML}</body></html>`;
+      const text = plainTextFrom(copyRoot);
+
+      if (navigator.clipboard && window.ClipboardItem) {
+        const item = new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([text], { type: 'text/plain' })
+        });
+        await navigator.clipboard.write([item]);
+        copyState.textContent = '已复制公众号正文，可粘贴到后台';
+        return;
+      }
+
+      selectCopyRoot();
+      const ok = document.execCommand('copy');
+      copyState.textContent = ok ? '已复制公众号正文，可粘贴到后台' : '浏览器限制自动复制，请按 Ctrl+C';
+    }
+
+    document.getElementById('copy-rich').addEventListener('click', () => {
+      copyRichHtml().catch(() => {
+        selectCopyRoot();
+        copyState.textContent = '浏览器限制自动复制，请按 Ctrl+C';
+      });
+    });
+
+    document.getElementById('select-rich').addEventListener('click', selectCopyRoot);
+
+    window.__wechatCopyPreview = {
+      copyRootId: 'wechat-copy-content',
+      hasInlineStyles: true,
+      templateVersion: 'wechat-copy-template-v1.2',
+      blockCount: copyRoot.querySelectorAll('[style]').length
+    };
+  </script>
+</body>
+</html>
